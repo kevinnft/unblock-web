@@ -6,7 +6,6 @@
 *Cloudflare Turnstile · ISP DNS poison · X.com login walls — solved.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/unblock-web?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/unblock-web/)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kevinnft/unblock-web/pkgs/container/unblock-web)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Patchright](https://img.shields.io/badge/Patchright-Stealth-FF6B6B?style=for-the-badge)](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright)
@@ -56,26 +55,46 @@ You hit a URL. It returns junk:
 
 ## 🚀 Quick Start
 
-Pick your favorite install method:
+Pick your favorite install method. **All four work right now.**
 
-### 🐍 pip (recommended)
+### ⚡ One-liner (zero-config)
 
 ```bash
-pip install 'unblock-web[stealth]'
-unblock-web heal              # one-time: install Chromium with the platform-override fix
+curl -fsSL https://raw.githubusercontent.com/kevinnft/unblock-web/main/scripts/install.sh | bash
+```
+
+Picks a working Python (3.11–3.13), creates an isolated venv at `~/.unblock-web`, installs Chromium via `heal`, and symlinks `unblock-web` into `~/.local/bin`. Reversible: `rm -rf ~/.unblock-web ~/.local/bin/unblock-web`.
+
+### 🐍 pip
+
+```bash
+pip install 'unblock-web[stealth] @ git+https://github.com/kevinnft/unblock-web.git'
+unblock-web heal              # one-time: auto-detects OS, installs Chromium
 unblock-web verify            # 3-tier health check
 unblock-web fetch https://x.com/elonmusk/status/123456789
 ```
 
+> *We're on git-install while we wait for PyPI. The git URL works the same as PyPI would. See [docs/publishing.md](docs/publishing.md).*
+
 ### 🐳 Docker (zero-install)
 
 ```bash
-docker run --rm ghcr.io/kevinnft/unblock-web fetch https://example.com
+docker run --rm ghcr.io/kevinnft/unblock-web:latest fetch https://example.com
 
 # With TinyFish (Tier 2 geo-proxy)
 docker run --rm \
   -e TINYFISH_API_KEY=$TINYFISH_API_KEY \
-  ghcr.io/kevinnft/unblock-web fetch https://blocked.com --proxy US
+  ghcr.io/kevinnft/unblock-web:latest fetch https://blocked.com --proxy US
+```
+
+### 📦 From source
+
+```bash
+git clone https://github.com/kevinnft/unblock-web.git
+cd unblock-web
+pip install -e '.[stealth]'
+unblock-web heal
+unblock-web verify --verbose
 ```
 
 ### 🛠️ Library
@@ -93,16 +112,6 @@ page = fetch("https://web3.okx.com", proxy_country="US")
 
 # Force a specific tier
 page = fetch("https://target.com", tier="T1", wait=8000)
-```
-
-### 📦 From source
-
-```bash
-git clone https://github.com/kevinnft/unblock-web.git
-cd unblock-web
-pip install -e '.[stealth]'
-unblock-web heal
-unblock-web verify --verbose
 ```
 
 ### 🔌 In an AI agent

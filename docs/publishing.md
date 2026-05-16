@@ -2,6 +2,15 @@
 
 This file documents the one-time setup for automated publishing. Most users won't need to read this — it's for repo maintainers.
 
+## TL;DR
+
+PyPI publishing is **opt-in via the `PYPI_PUBLISH` repo variable**, so a tag push doesn't fail before Trusted Publishing is configured. After running the steps below once, set the variable and PyPI publishes automatically on every tag.
+
+```bash
+# After setup is complete, flip the switch:
+gh variable set PYPI_PUBLISH --body true --repo kevinnft/unblock-web
+```
+
 ## Docker (GHCR) — already working ✅
 
 GHCR uses `GITHUB_TOKEN` automatically. No setup needed. The publish.yml workflow:

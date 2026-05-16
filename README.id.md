@@ -6,7 +6,6 @@
 *Cloudflare Turnstile · Internet Positif (DNS poison) · X.com login wall — beres semua.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/unblock-web?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/unblock-web/)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kevinnft/unblock-web/pkgs/container/unblock-web)
 [![CI](https://img.shields.io/github/actions/workflow/status/kevinnft/unblock-web/canary.yml?branch=main&style=for-the-badge&label=canary&logo=github-actions&logoColor=white)](https://github.com/kevinnft/unblock-web/actions/workflows/canary.yml)
 
@@ -36,22 +35,41 @@ Lo fetch URL, hasilnya sampah:
 
 ## 🚀 Mulai Cepat
 
-### Pakai pip
+Pilih cara install yang lo suka. **Empat-empatnya jalan sekarang.**
+
+### ⚡ One-liner (zero-config)
 
 ```bash
-pip install 'unblock-web[stealth]'
-unblock-web heal             # install Chromium (sekali aja)
+curl -fsSL https://raw.githubusercontent.com/kevinnft/unblock-web/main/scripts/install.sh | bash
+```
+
+Otomatis pilih Python yang jalan (3.11–3.13), bikin venv terisolasi di `~/.unblock-web`, install Chromium, dan link binary ke `~/.local/bin`. Mau hapus? `rm -rf ~/.unblock-web ~/.local/bin/unblock-web`.
+
+### 🐍 pip
+
+```bash
+pip install 'unblock-web[stealth] @ git+https://github.com/kevinnft/unblock-web.git'
+unblock-web heal             # sekali aja: auto-detect OS, install Chromium
 unblock-web verify           # cek sehat ngga
 unblock-web fetch https://x.com/elonmusk/status/123456789
 ```
 
-### Pakai Docker (zero-install)
+### 🐳 Docker (zero-install)
 
 ```bash
-docker run --rm ghcr.io/kevinnft/unblock-web fetch https://example.com
+docker run --rm ghcr.io/kevinnft/unblock-web:latest fetch https://example.com
 ```
 
-### Sebagai library Python
+### 📦 Dari source
+
+```bash
+git clone https://github.com/kevinnft/unblock-web.git
+cd unblock-web
+pip install -e '.[stealth]'
+unblock-web heal
+```
+
+### 🛠️ Sebagai library Python
 
 ```python
 from unblock_web import fetch

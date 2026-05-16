@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "unblock-web"
-version = "0.2.0"
+version = "0.2.1"
 description = "Anti-blok web scraping stack: 4-tier decision tree for Cloudflare Turnstile, x.com login walls, ISP DNS poisoning"
 readme = "README.md"
 requires-python = ">=3.10"
