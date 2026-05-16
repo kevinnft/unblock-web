@@ -17,18 +17,34 @@ from pathlib import Path
 from typing import Tuple
 
 
+def _get_playwright_cache_dir() -> Path:
+    """Return the Playwright browser cache dir for current OS."""
+    import os as _os
+    import platform as _plat
+    env_path = _os.environ.get("PLAYWRIGHT_BROWSERS_PATH")
+    if env_path:
+        return Path(env_path)
+    system = _plat.system().lower()
+    home = Path.home()
+    if system == "darwin":
+        return home / "Library" / "Caches" / "ms-playwright"
+    if system == "windows":
+        return home / "AppData" / "Local" / "ms-playwright"
+    return home / ".cache" / "ms-playwright"
+
+
 def _check_scrapling() -> Tuple[bool, str]:
     """Tier 1: Patchright + Scrapling importable + Chromium present."""
-    home_cache = Path.home() / ".cache/ms-playwright"
-    chromium = list(home_cache.glob("chromium-*")) + list(home_cache.glob("chromium_headless_shell-*"))
+    cache = _get_playwright_cache_dir()
+    chromium = list(cache.glob("chromium-*")) + list(cache.glob("chromium_headless_shell-*"))
     if not chromium:
-        return False, "Chromium not installed — run `unblock-web heal`"
+        return False, f"Chromium not installed under {cache} — run `unblock-web heal`"
     try:
         import patchright  # noqa: F401
         import scrapling   # noqa: F401
     except ImportError as e:
         return False, f"missing dep: {e} — run: pip install unblock-web[stealth]"
-    return True, f"patchright + scrapling importable, chromium at {home_cache}"
+    return True, f"patchright + scrapling importable, chromium at {cache}"
 
 
 def _check_tinyfish() -> Tuple[bool, str]:

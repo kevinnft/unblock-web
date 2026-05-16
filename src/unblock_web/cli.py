@@ -22,6 +22,27 @@ def cmd_verify(args: argparse.Namespace) -> int:
     return 0 if ok else 1
 
 
+def _get_playwright_cache_dir() -> Path:
+    """Return the Playwright browser cache dir for current OS.
+
+    Mirrors Playwright's own logic — defaults differ per OS.
+    """
+    # Explicit env var wins
+    env_path = os.environ.get("PLAYWRIGHT_BROWSERS_PATH")
+    if env_path:
+        return Path(env_path)
+
+    import platform as _plat
+    system = _plat.system().lower()
+    home = Path.home()
+    if system == "darwin":
+        return home / "Library" / "Caches" / "ms-playwright"
+    if system == "windows":
+        return home / "AppData" / "Local" / "ms-playwright"
+    # Linux + everything else
+    return home / ".cache" / "ms-playwright"
+
+
 def cmd_heal(args: argparse.Namespace) -> int:
     """Re-install Patchright + Playwright Chromium with platform override."""
     py = args.python or sys.executable
@@ -53,7 +74,7 @@ def cmd_heal(args: argparse.Namespace) -> int:
             )
             return 1
 
-    cache = Path.home() / ".cache/ms-playwright"
+    cache = _get_playwright_cache_dir()
     chromium = list(cache.glob("chromium-*")) + list(cache.glob("chromium_headless_shell-*"))
     if chromium:
         print(f"\nOK: Chromium installed at {cache}")
