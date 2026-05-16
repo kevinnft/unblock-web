@@ -13,6 +13,9 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      # Opt into Node.js 24 (the deprecation warning suggested this).
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
       - uses: actions/checkout@v4
 

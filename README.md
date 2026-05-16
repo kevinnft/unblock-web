@@ -10,6 +10,7 @@
 [![Patchright](https://img.shields.io/badge/Patchright-Stealth-FF6B6B?style=for-the-badge)](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright)
 [![TinyFish](https://img.shields.io/badge/TinyFish-Free%20Tier-4ECDC4?style=for-the-badge)](https://tinyfish.ai)
 [![Cloudflare Bypass](https://img.shields.io/badge/Cloudflare-Bypassed-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](#tier-1-scrapling-stealth)
+[![CI](https://img.shields.io/github/actions/workflow/status/kevinnft/unblock-web/canary.yml?branch=main&style=for-the-badge&label=canary&logo=github-actions&logoColor=white)](https://github.com/kevinnft/unblock-web/actions/workflows/canary.yml)
 [![Status](https://img.shields.io/badge/status-production-brightgreen?style=for-the-badge)](#)
 
 [**🚀 Quick Start**](#-quick-start) · [**📖 Decision Tree**](#-decision-tree) · [**🛡️ Tiers**](#-the-4-tier-stack) · [**🧪 Verified Targets**](#-verified-targets) · [**🤝 Contributing**](#-contributing)
