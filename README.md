@@ -6,6 +6,7 @@
 *Cloudflare Turnstile · ISP DNS poison · X.com login walls — solved.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/unblock-web?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/unblock-web/)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kevinnft/unblock-web/pkgs/container/unblock-web)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Patchright](https://img.shields.io/badge/Patchright-Stealth-FF6B6B?style=for-the-badge)](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright)
@@ -68,13 +69,11 @@ Picks a working Python (3.11–3.13), creates an isolated venv at `~/.unblock-we
 ### 🐍 pip
 
 ```bash
-pip install 'unblock-web[stealth] @ git+https://github.com/kevinnft/unblock-web.git'
+pip install 'unblock-web[stealth]'
 unblock-web heal              # one-time: auto-detects OS, installs Chromium
 unblock-web verify            # 3-tier health check
 unblock-web fetch https://x.com/elonmusk/status/123456789
 ```
-
-> *We're on git-install while we wait for PyPI. The git URL works the same as PyPI would. See [docs/publishing.md](docs/publishing.md).*
 
 ### 🐳 Docker (zero-install)
 

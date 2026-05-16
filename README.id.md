@@ -6,6 +6,7 @@
 *Cloudflare Turnstile · Internet Positif (DNS poison) · X.com login wall — beres semua.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/unblock-web?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/unblock-web/)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kevinnft/unblock-web/pkgs/container/unblock-web)
 [![CI](https://img.shields.io/github/actions/workflow/status/kevinnft/unblock-web/canary.yml?branch=main&style=for-the-badge&label=canary&logo=github-actions&logoColor=white)](https://github.com/kevinnft/unblock-web/actions/workflows/canary.yml)
 
@@ -48,7 +49,7 @@ Otomatis pilih Python yang jalan (3.11–3.13), bikin venv terisolasi di `~/.unb
 ### 🐍 pip
 
 ```bash
-pip install 'unblock-web[stealth] @ git+https://github.com/kevinnft/unblock-web.git'
+pip install 'unblock-web[stealth]'
 unblock-web heal             # sekali aja: auto-detect OS, install Chromium
 unblock-web verify           # cek sehat ngga
 unblock-web fetch https://x.com/elonmusk/status/123456789
