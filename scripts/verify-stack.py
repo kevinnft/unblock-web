@@ -89,6 +89,11 @@ def check_aggregator():
 
 
 def main():
+    # Tier 2 is optional in CI / fresh installs (TinyFish key takes
+    # 30 seconds to register, and forks won't have it). Allow soft-fail
+    # via env var so CI on PRs from forks doesn't break.
+    skip_tier2 = os.environ.get("UNBLOCK_WEB_SKIP_TIER2") == "1"
+
     checks = [
         ("Tier 1: Scrapling+Patchright", check_scrapling),
         ("Tier 2: TinyFish API", check_tinyfish),
@@ -99,9 +104,17 @@ def main():
         ok, msg = fn()
         results.append((name, ok, msg))
         if VERBOSE:
-            mark = "OK " if ok else "FAIL"
+            mark = "OK " if ok else ("SKIP" if (name.startswith("Tier 2") and skip_tier2) else "FAIL")
             print(f"[{mark}] {name}: {msg}")
-    failed = [r for r in results if not r[1]]
+
+    # Tier 2 failures are downgraded to warnings when skip flag is set
+    failed = []
+    for name, ok, msg in results:
+        if ok:
+            continue
+        if name.startswith("Tier 2") and skip_tier2:
+            continue  # downgraded to warning above, don't fail the run
+        failed.append((name, ok, msg))
     if failed:
         # Cron-friendly: only emit on regression
         print("WEB SCRAPING STACK REGRESSION:")
