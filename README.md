@@ -58,7 +58,7 @@ You hit a URL. It returns junk:
 ```bash
 git clone https://github.com/kevinnft/unblock-web.git
 cd unblock-web
-pip install scrapling patchright
+pip install -r requirements.txt    # pulls scrapling[all], patchright, playwright
 ```
 
 ### 2. Install Chromium (Ubuntu 26.04 fix included)

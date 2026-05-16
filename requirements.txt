@@ -2,13 +2,11 @@
 #
 # Pinned to known-working versions as of May 2026.
 # Bump these when you've re-verified the stack against current versions.
+#
+# Note: scrapling[all] pulls all transitive deps (curl_cffi, msgspec, lxml,
+# browserforge, etc.). The bare `scrapling` package leaves them as optional
+# extras and you'll hit ModuleNotFoundError at first import.
 
-scrapling>=0.4,<1.0
+scrapling[all]>=0.4,<1.0
 patchright>=1.40,<2.0
 playwright>=1.40,<2.0
-
-# Transitive deps that scrapling requires at import time but doesn't
-# auto-pull (varies by scrapling install extras). Without these, even
-# `from scrapling.fetchers import StealthyFetcher` fails.
-curl_cffi>=0.7,<1.0
-lxml>=5.0
