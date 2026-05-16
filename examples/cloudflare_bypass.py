@@ -26,14 +26,16 @@ def main():
 
     page = StealthyFetcher.fetch(
         url=url,
+        headless=True,
         network_idle=True,
         solve_cloudflare=True,  # auto-handle Turnstile JS challenge
         wait=8000,              # CF challenges take a few seconds to clear
-        extraction_type="markdown",
     )
 
     print(f"Status: {page.status}")
     print()
+
+    text = page.get_all_text()
 
     # Common challenge indicators — should NOT appear in successful response
     challenge_indicators = [
@@ -42,7 +44,7 @@ def main():
         "verifying your request",
         "challenge-platform",
     ]
-    if any(ind in page.markdown for ind in challenge_indicators):
+    if any(ind in text for ind in challenge_indicators):
         print("⚠️  Looks like the challenge wasn't solved — extracted DOM still shows challenge text.")
         print("Try: increase wait to 10000-15000, or check that solve_cloudflare=True is honored.")
     else:
@@ -50,7 +52,7 @@ def main():
 
     print()
     print("─" * 60)
-    print(page.markdown[:3000])
+    print(text[:3000])
     print("─" * 60)
 
 

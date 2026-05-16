@@ -26,7 +26,6 @@ def normalize(arg: str) -> str:
     if arg.startswith("http"):
         return arg
     if re.fullmatch(r"\d{15,25}", arg):
-        # Bare ID — assume @user is in URL or use generic /i/web/status path
         return f"https://x.com/i/web/status/{arg}"
     raise ValueError(f"Unrecognized input: {arg}")
 
@@ -41,20 +40,24 @@ def main():
 
     page = StealthyFetcher.fetch(
         url=url,
-        network_idle=True,    # wait for XHRs to settle
-        solve_cloudflare=True, # x.com uses CF in some regions
-        wait=5000,             # 5s — let React hydrate the tweet
-        extraction_type="markdown",
+        headless=True,
+        network_idle=True,         # wait for XHRs to settle
+        solve_cloudflare=True,     # x.com uses CF in some regions
+        wait=5000,                 # 5s — let React hydrate the tweet
     )
 
     print(f"Status: {page.status}")
-    print(f"Final URL: {page.url}")
+    print(f"URL:    {page.url}")
     print()
+
+    # Extract clean text (no HTML, no nav cruft)
+    text = page.get_all_text()
+
     print("─" * 60)
-    print(page.markdown[:4000])
+    print(text[:4000])
     print("─" * 60)
-    if len(page.markdown) > 4000:
-        print(f"\n[truncated — full body is {len(page.markdown)} chars]")
+    if len(text) > 4000:
+        print(f"\n[truncated — full body is {len(text)} chars]")
 
 
 if __name__ == "__main__":

@@ -28,7 +28,6 @@ def parse_args() -> str:
         sys.exit(1)
 
     if len(args) == 1:
-        # Full URL form
         url = args[0]
         m = re.match(r"https?://(?:x|twitter)\.com/([^/]+)/status/(\d+)", url)
         if not m:
@@ -36,8 +35,7 @@ def parse_args() -> str:
             sys.exit(1)
         handle, tweet_id = m.group(1), m.group(2)
     elif len(args) == 2:
-        handle, tweet_id = args[0], args[1]
-        handle = handle.lstrip("@")
+        handle, tweet_id = args[0].lstrip("@"), args[1]
     else:
         print(__doc__)
         sys.exit(1)
@@ -51,10 +49,10 @@ def main():
 
     page = StealthyFetcher.fetch(
         url=url,
+        headless=True,
         network_idle=True,
         solve_cloudflare=True,  # xcancel is CF-protected
         wait=5000,
-        extraction_type="markdown",
     )
 
     print(f"Status: {page.status}\n")
@@ -67,14 +65,12 @@ def main():
         print("Live instances: https://github.com/zedeus/nitter/wiki/Instances")
         sys.exit(1)
 
-    # xcancel renders "Reply" sections after the root tweet
-    body = page.markdown
+    text = page.get_all_text()
     print("─" * 60)
-    print(body)
+    print(text[:5000])
     print("─" * 60)
 
-    # Sanity: count replies
-    reply_count = body.count("Replying to ")
+    reply_count = text.count("Replying to ")
     print(f"\nDetected {reply_count} reply blocks in DOM.")
 
 

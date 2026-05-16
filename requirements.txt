@@ -1,0 +1,8 @@
+# unblock-web dependencies
+#
+# Pinned to known-working versions as of May 2026.
+# Bump these when you've re-verified the stack against current versions.
+
+scrapling>=0.4,<1.0
+patchright>=1.40,<2.0
+playwright>=1.40,<2.0
