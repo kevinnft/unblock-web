@@ -6,12 +6,14 @@
 *Cloudflare Turnstile · ISP DNS poison · X.com login walls — solved.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/unblock-web?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/unblock-web/)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/kevinnft/unblock-web/pkgs/container/unblock-web)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Patchright](https://img.shields.io/badge/Patchright-Stealth-FF6B6B?style=for-the-badge)](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright)
-[![TinyFish](https://img.shields.io/badge/TinyFish-Free%20Tier-4ECDC4?style=for-the-badge)](https://tinyfish.ai)
 [![Cloudflare Bypass](https://img.shields.io/badge/Cloudflare-Bypassed-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](#tier-1-scrapling-stealth)
 [![CI](https://img.shields.io/github/actions/workflow/status/kevinnft/unblock-web/canary.yml?branch=main&style=for-the-badge&label=canary&logo=github-actions&logoColor=white)](https://github.com/kevinnft/unblock-web/actions/workflows/canary.yml)
-[![Status](https://img.shields.io/badge/status-production-brightgreen?style=for-the-badge)](#)
+
+**🌐 English · 🇮🇩 [Bahasa Indonesia](README.id.md)**
 
 [**🚀 Quick Start**](#-quick-start) · [**📖 Decision Tree**](#-decision-tree) · [**🛡️ Tiers**](#-the-4-tier-stack) · [**🧪 Verified Targets**](#-verified-targets) · [**🤝 Contributing**](#-contributing)
 
@@ -54,58 +56,65 @@ You hit a URL. It returns junk:
 
 ## 🚀 Quick Start
 
-### 1. Install
+Pick your favorite install method:
+
+### 🐍 pip (recommended)
+
+```bash
+pip install 'unblock-web[stealth]'
+unblock-web heal              # one-time: install Chromium with the platform-override fix
+unblock-web verify            # 3-tier health check
+unblock-web fetch https://x.com/elonmusk/status/123456789
+```
+
+### 🐳 Docker (zero-install)
+
+```bash
+docker run --rm ghcr.io/kevinnft/unblock-web fetch https://example.com
+
+# With TinyFish (Tier 2 geo-proxy)
+docker run --rm \
+  -e TINYFISH_API_KEY=$TINYFISH_API_KEY \
+  ghcr.io/kevinnft/unblock-web fetch https://blocked.com --proxy US
+```
+
+### 🛠️ Library
+
+```python
+from unblock_web import fetch
+
+# Auto-pilot — picks the right tier per URL
+page = fetch("https://x.com/seelffff/status/2055155782367187375")
+print(page.text)
+print(f"Used tier: {page.tier}")
+
+# Force ISP/geo bypass
+page = fetch("https://web3.okx.com", proxy_country="US")
+
+# Force a specific tier
+page = fetch("https://target.com", tier="T1", wait=8000)
+```
+
+### 📦 From source
 
 ```bash
 git clone https://github.com/kevinnft/unblock-web.git
 cd unblock-web
-pip install -r requirements.txt    # pulls scrapling[all], patchright, playwright
+pip install -e '.[stealth]'
+unblock-web heal
+unblock-web verify --verbose
 ```
 
-### 2. Install Chromium (Ubuntu 26.04 fix included)
+### 🔌 In an AI agent
 
-```bash
-bash scripts/heal-chromium.sh
-```
+Hermes Agent example — drop the canary into session-start:
 
-> **Why a script?** Playwright/Patchright refuse to install on Ubuntu 26.04 (says "platform not supported"). The script sets `PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64` — the same Chromium binary runs fine, only the installer's allowlist is the blocker.
-
-### 3. Verify the stack
-
-```bash
-python3 scripts/verify-stack.py --verbose
-```
-
-Expected output:
-
-```
-[OK ] Tier 1: Scrapling+Patchright: patchright + scrapling importable, chromium present
-[OK ] Tier 2: TinyFish API: search API live (10 results)
-[OK ] Tier 3: xcancel mirror: xcancel.com up (HTTP 403 — CF anti-bot expected, Tier 1 bypasses it)
-
-All tiers healthy.
-```
-
-### 4. Fetch your first hard target
-
-```python
-from scrapling.fetchers import StealthyFetcher
-
-# x.com tweet without login? No problem.
-page = StealthyFetcher.fetch(
-    "https://x.com/<user>/status/<tweet_id>",
-    network_idle=True,
-    solve_cloudflare=True,
-    wait=5000,
-)
-print(page.markdown)
-```
-
-Or one-liner via TinyFish (geo-proxy, ISP bypass):
-
-```bash
-export TINYFISH_API_KEY=your_free_key
-python3 scripts/tinyfish_fetch.py "https://target.com" --proxy US
+```yaml
+# ~/.hermes/config.yaml
+hooks:
+  on_session_start:
+    - command: "unblock-web verify"
+      timeout: 30
 ```
 
 ---

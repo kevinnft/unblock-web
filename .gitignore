@@ -29,3 +29,8 @@ ms-playwright/
 # Local test outputs
 /tmp/
 *.log
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

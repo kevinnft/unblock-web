@@ -6,61 +6,49 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # Run weekly to catch upstream regressions (Cloudflare changes,
-    # TinyFish API changes, mirror availability shifts).
     - cron: "0 9 * * 1"   # Mondays 09:00 UTC
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12"]
     env:
-      # Opt into Node.js 24 (the deprecation warning suggested this).
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python }}
 
-      - name: Install Python dependencies
+      - name: Install package with stealth extra
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install '.[stealth]'
 
-      - name: Install Chromium (with platform override fallback)
+      - name: Install Chromium via unblock-web heal
         run: |
-          # Try normal install first; fall back to override if the runner's
-          # distro isn't on the Playwright/Patchright allowlist.
-          if ! python3 -m playwright install chromium 2>/dev/null; then
-            PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 \
-              python3 -m playwright install chromium
-          fi
-          if ! python3 -m patchright install chromium 2>/dev/null; then
-            PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 \
-              python3 -m patchright install chromium
-          fi
+          unblock-web heal
 
-      - name: Run canary (verbose)
+      - name: Run canary
         env:
-          # TinyFish key is optional — set as a repo secret to enable Tier 2 check.
-          # Without it, Tier 2 is skipped (warning only) and Tier 1 + 3 must pass.
           TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
           UNBLOCK_WEB_SKIP_TIER2: ${{ secrets.TINYFISH_API_KEY == '' && '1' || '' }}
         run: |
-          python3 scripts/verify-stack.py --verbose
+          unblock-web verify --verbose
 
-      - name: Run examples (smoke test)
+      - name: Smoke test library API
         run: |
-          # Quick smoke — just verify the import + API surface, don't actually
-          # fetch external URLs in CI (flaky, slow, may be rate-limited).
-          python3 -c "
-          from scrapling.fetchers import StealthyFetcher
-          import inspect
-          assert hasattr(StealthyFetcher, 'fetch'), 'StealthyFetcher.fetch missing'
-          # Verify the parameter we use exists
-          src = inspect.getsource(StealthyFetcher.fetch)
-          for kw in ['solve_cloudflare', 'network_idle', 'wait', 'headless']:
-              assert kw in src, f'param {kw} no longer in StealthyFetcher.fetch'
-          print('All required parameters present.')
+          python -c "
+          from unblock_web import fetch, FetchResult, verify_stack, __version__
+          print(f'unblock-web {__version__}')
+          # T0 sanity
+          r = fetch('https://example.com', tier='T0')
+          assert r.status == 200
+          assert 'Example Domain' in r.text
+          print(f'T0 fetch OK: tier={r.tier} chars={len(r.text)}')
           "

@@ -6,7 +6,9 @@
 2. Make your change
 3. Run the canary locally:
    ```bash
-   python3 scripts/verify-stack.py --verbose
+   pip install -e '.[stealth]'
+   unblock-web heal
+   unblock-web verify --verbose
    ```
 4. Push to a branch, open PR
 
