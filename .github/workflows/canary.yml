@@ -1,0 +1,47 @@
+name: Canary
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run weekly to catch upstream regressions (Cloudflare changes,
+    # TinyFish API changes, mirror availability shifts).
+    - cron: "0 9 * * 1"   # Mondays 09:00 UTC
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python deps
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install scrapling patchright
+
+      - name: Install Chromium (with platform override fallback)
+        run: |
+          # Try normal install first; fall back to override if the runner's
+          # distro isn't on the Playwright/Patchright allowlist.
+          if ! python3 -m playwright install chromium 2>/dev/null; then
+            PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 \
+              python3 -m playwright install chromium
+          fi
+          if ! python3 -m patchright install chromium 2>/dev/null; then
+            PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 \
+              python3 -m patchright install chromium
+          fi
+
+      - name: Run canary (verbose)
+        env:
+          # TinyFish key is optional — set as a repo secret to enable Tier 2 check.
+          # Without it, Tier 2 fails gracefully and the rest still validates.
+          TINYFISH_API_KEY: ${{ secrets.TINYFISH_API_KEY }}
+        run: |
+          python3 scripts/verify-stack.py --verbose

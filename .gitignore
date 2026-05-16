@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Secrets
+.env
+.env.local
+*.bearer
+*.token
+
+# Playwright cache (huge)
+.cache/
+ms-playwright/
+
+# Local test outputs
+/tmp/
+*.log
