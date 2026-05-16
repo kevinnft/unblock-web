@@ -6,3 +6,9 @@
 scrapling>=0.4,<1.0
 patchright>=1.40,<2.0
 playwright>=1.40,<2.0
+
+# Transitive deps that scrapling requires at import time but doesn't
+# auto-pull (varies by scrapling install extras). Without these, even
+# `from scrapling.fetchers import StealthyFetcher` fails.
+curl_cffi>=0.7,<1.0
+lxml>=5.0
