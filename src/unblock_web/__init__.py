@@ -17,7 +17,7 @@ Library:
     print(page.text)
 """
 
-__version__ = "0.2.0"
+__version__ = "0.2.3"
 
 from unblock_web.fetcher import fetch, FetchResult
 from unblock_web.verify import verify_stack

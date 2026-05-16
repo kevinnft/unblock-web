@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "unblock-web"
-version = "0.2.2"
+dynamic = ["version"]
 description = "Anti-blok web scraping stack: 4-tier decision tree for Cloudflare Turnstile, x.com login walls, ISP DNS poisoning"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -74,6 +74,9 @@ Repository = "https://github.com/kevinnft/unblock-web"
 Issues = "https://github.com/kevinnft/unblock-web/issues"
 Changelog = "https://github.com/kevinnft/unblock-web/releases"
 
+[tool.hatch.version]
+path = "src/unblock_web/__init__.py"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/unblock_web"]
 
@@ -85,6 +88,7 @@ include = [
     "docs",
     "README.md",
     "README.id.md",
+    "CHANGELOG.md",
     "LICENSE",
     "SECURITY.md",
     "CONTRIBUTING.md",
