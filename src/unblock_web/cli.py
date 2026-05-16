@@ -25,13 +25,17 @@ def cmd_verify(args: argparse.Namespace) -> int:
 def cmd_heal(args: argparse.Namespace) -> int:
     """Re-install Patchright + Playwright Chromium with platform override."""
     py = args.python or sys.executable
-    platform = args.platform or "ubuntu24.04-x64"
+    platform = args.platform or _default_platform_override()
 
     print(f"Using Python: {py}")
-    print(f"Platform override: {platform}\n")
+    if platform:
+        print(f"Platform override: {platform}\n")
+    else:
+        print("Platform: auto-detected (no override needed)\n")
 
     env = os.environ.copy()
-    env["PLAYWRIGHT_HOST_PLATFORM_OVERRIDE"] = platform
+    if platform:
+        env["PLAYWRIGHT_HOST_PLATFORM_OVERRIDE"] = platform
 
     for module in ("playwright", "patchright"):
         print(f"Installing Chromium for {module}...")
@@ -58,6 +62,38 @@ def cmd_heal(args: argparse.Namespace) -> int:
         return 0
     print(f"\nFAIL: no chromium under {cache}", file=sys.stderr)
     return 1
+
+
+def _default_platform_override() -> str:
+    """Pick a sensible PLAYWRIGHT_HOST_PLATFORM_OVERRIDE value per host OS.
+
+    Returns empty string when no override is needed (most platforms).
+    Only Ubuntu 25.10+ / 26.04+ need the override (Playwright's allowlist
+    doesn't include them yet as of May 2026).
+    """
+    import platform
+
+    system = platform.system().lower()
+    if system != "linux":
+        return ""  # macOS, Windows: native install works
+
+    # Read /etc/os-release to detect Ubuntu version
+    try:
+        with open("/etc/os-release") as f:
+            content = f.read()
+        if "Ubuntu" not in content and "ubuntu" not in content:
+            return ""  # Non-Ubuntu Linux: try native first
+        # Extract VERSION_ID
+        for line in content.splitlines():
+            if line.startswith("VERSION_ID="):
+                version = line.split("=", 1)[1].strip().strip('"')
+                # Override needed for Ubuntu 25+ (post-24.04)
+                if version >= "25":
+                    return "ubuntu24.04-x64"
+                return ""  # Ubuntu 24.04 or older — native install works
+    except Exception:
+        pass
+    return ""
 
 
 def cmd_fetch(args: argparse.Namespace) -> int:
